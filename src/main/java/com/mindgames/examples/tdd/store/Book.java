@@ -10,6 +10,8 @@ package com.mindgames.examples.tdd.store;
 public class Book {
     private String author;
     private String title;
+    private String publisher;
+    private int publishYear;
 
     public void setAuthor(String author) {
         this.author = author;
@@ -25,5 +27,21 @@ public class Book {
 
     public String getTitle() {
         return title;
+    }
+
+    public void setPublisher(String publisher) {
+        this.publisher = publisher;
+    }
+
+    public String getPublisher() {
+        return publisher;
+    }
+
+    public void setPublishYear(int publishYear) {
+        this.publishYear = publishYear;
+    }
+
+    public int getPublishYear() {
+        return publishYear;
     }
 }

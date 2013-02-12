@@ -31,7 +31,9 @@ public class Store {
     public void addBook(Book book) {
         books.add(book);
         authors.add(book.getAuthor());
-        titles.add(book.getTitle());
+        String publisher = book.getPublisher() != null ? book.getPublisher() : "";
+        String publishYear = book.getPublishYear() > 0 ? "" + book.getPublishYear() : "";
+        titles.add(String.format("%s [%s][%s]", book.getTitle(), publisher, publishYear));
     }
 
     public Set<String> getAuthors() {
@@ -42,13 +44,14 @@ public class Store {
         return titles;
     }
 
-    public Book findByAuthor(String s) {
+    public List<Book> findByAuthor(String s) {
+        List<Book> result = new ArrayList<Book>();
         for (Book book : books) {
             if (book.getAuthor().equals(s)) {
-                return book;
+                result.add(book);
             }
         }
-        return null;
+        return result;
     }
 
     public Book findByTitle(String s) {

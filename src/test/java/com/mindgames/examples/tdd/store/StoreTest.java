@@ -2,6 +2,7 @@ package com.mindgames.examples.tdd.store;
 
 import org.testng.annotations.Test;
 
+import java.util.List;
 import java.util.Set;
 
 import static org.testng.AssertJUnit.assertEquals;
@@ -65,7 +66,7 @@ public class StoreTest {
         store.addBook(book);
         Set<String> titles = store.getTitles();
         assertEquals("Wrong amounts of titles", 1, titles.size());
-        assertTrue("Wrong author", titles.contains("Refactoring"));
+        assertTrue("Wrong title", titles.contains("Refactoring [][]"));
     }
 
     @Test
@@ -79,7 +80,7 @@ public class StoreTest {
         store.addBook(book1);
         Set<String> titles = store.getTitles();
         assertEquals("Wrong amounts of titles", 1, titles.size());
-        assertTrue("Wrong author", titles.contains("Refactoring"));
+        assertTrue("Wrong title", titles.contains("Refactoring [][]"));
     }
 
     @Test
@@ -88,9 +89,10 @@ public class StoreTest {
         Book book = new Book();
         book.setAuthor("Kent Beck");
         store.addBook(book);
-        Book foundedBook = store.findByAuthor("Kent Beck");
-        assertTrue("Book object is null", foundedBook != null);
-        assertEquals("Smth wrong with find by author", book, foundedBook);
+        List<Book> foundedBooks = store.findByAuthor("Kent Beck");
+        assertTrue("Book list is null", foundedBooks != null);
+        assertTrue("Book list is empty", !foundedBooks.isEmpty());
+        assertEquals("Smth wrong with find by author", book, foundedBooks.get(0));
     }
 
     @Test
@@ -102,6 +104,70 @@ public class StoreTest {
         Book foundedBook = store.findByTitle("Refactoring");
         assertTrue("Book object is null", foundedBook != null);
         assertEquals("Smth wrong with find by author", book, foundedBook);
+    }
+
+    //Part 2
+
+    @Test
+    public void shouldReturnDifferentTitlesForDifferentPublishers() {
+        Store store = new Store();
+        Book book = new Book();
+        book.setTitle("Refactoring");
+        book.setPublisher("Piter Press");
+        Book book1 = new Book();
+        book1.setTitle("Refactoring");
+        book1.setPublisher("A-Press");
+        store.addBook(book);
+        store.addBook(book1);
+        Set<String> titles = store.getTitles();
+        assertEquals("Wrong amounts of titles", 2, titles.size());
+        assertTrue("Wrong title", titles.contains("Refactoring [Piter Press][]"));
+        assertTrue("Wrong title", titles.contains("Refactoring [A-Press][]"));
+    }
+
+    @Test
+    public void shouldReturnDifferentTitlesForDifferentYears() {
+        Store store = new Store();
+        Book book = new Book();
+        book.setTitle("Refactoring");
+        book.setPublisher("A-Press");
+        book.setPublishYear(2012);
+        Book book1 = new Book();
+        book1.setTitle("Refactoring");
+        book1.setPublisher("A-Press");
+        book1.setPublishYear(2010);
+        store.addBook(book);
+        store.addBook(book1);
+        Set<String> titles = store.getTitles();
+        assertEquals("Wrong amounts of titles", 2, titles.size());
+        assertTrue("Wrong title", titles.contains("Refactoring [A-Press][2012]"));
+        assertTrue("Wrong title", titles.contains("Refactoring [A-Press][2010]"));
+    }
+
+    @Test
+    public void shouldCanAddSameBookToStore() {
+        Store store = new Store();
+        Book book = new Book();
+        book.setTitle("Refactoring");
+        book.setPublisher("A-Press");
+        book.setPublishYear(2012);
+        store.addBook(book);
+        store.addBook(book);
+        assertEquals("Two books were not added", 2, store.getTotalBooksAmount());
+    }
+
+    @Test
+    public void shouldFindAmountOfBooks() {
+        Store store = new Store();
+        Book book = new Book();
+        book.setTitle("Refactoring");
+        book.setAuthor("Kent Beck");
+        book.setPublisher("A-Press");
+        book.setPublishYear(2012);
+        store.addBook(book);
+        store.addBook(book);
+        List<Book> byAuthor = store.findByAuthor("Kent Beck");
+        assertEquals("Two books were not added", 2, byAuthor.size());
     }
 
 }
