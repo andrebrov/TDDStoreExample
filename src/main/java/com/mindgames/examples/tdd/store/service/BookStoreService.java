@@ -1,4 +1,8 @@
-package com.mindgames.examples.tdd.store;
+package com.mindgames.examples.tdd.store.service;
+
+import com.mindgames.examples.tdd.store.entities.Book;
+import com.mindgames.examples.tdd.store.entities.Item;
+import com.mindgames.examples.tdd.store.entities.Store;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -9,27 +13,23 @@ import java.util.Set;
  * Created with IntelliJ IDEA.
  * User: andrebrov
  * Date: 12.02.13
- * Time: 18:40
+ * Time: 20:06
  * To change this template use File | Settings | File Templates.
  */
-public class Store {
+public class BookStoreService {
 
-    private List<Book> books;
+    private Store store;
     private Set<String> authors;
     private Set<String> titles;
 
-    public Store() {
-        books = new ArrayList<Book>();
+    public BookStoreService(Store store) {
+        this.store = store;
         authors = new HashSet<String>();
         titles = new HashSet<String>();
     }
 
-    public int getTotalBooksAmount() {
-        return books.size();
-    }
-
     public void addBook(Book book) {
-        books.add(book);
+        store.addItem(book);
         authors.add(book.getAuthor());
         String publisher = book.getPublisher() != null ? book.getPublisher() : "";
         String publishYear = book.getPublishYear() > 0 ? "" + book.getPublishYear() : "";
@@ -46,7 +46,7 @@ public class Store {
 
     public List<Book> findByAuthor(String s) {
         List<Book> result = new ArrayList<Book>();
-        for (Book book : books) {
+        for (Book book : getBooks()) {
             if (book.getAuthor().equals(s)) {
                 result.add(book);
             }
@@ -55,11 +55,23 @@ public class Store {
     }
 
     public Book findByTitle(String s) {
-        for (Book book : books) {
+        for (Book book : getBooks()) {
             if (book.getTitle().equals(s)) {
                 return book;
             }
         }
         return null;
+    }
+
+
+    public List<Book> getBooks() {
+        List<Item> items = store.getItems();
+        List<Book> books = new ArrayList<Book>();
+        for (Item item : items) {
+            if (item.getItemType().equals(Item.BOOK_TYPE)) {
+                books.add((Book) item);
+            }
+        }
+        return books;
     }
 }

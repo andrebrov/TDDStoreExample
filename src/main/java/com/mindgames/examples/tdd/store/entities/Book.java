@@ -1,4 +1,4 @@
-package com.mindgames.examples.tdd.store;
+package com.mindgames.examples.tdd.store.entities;
 
 /**
  * Created with IntelliJ IDEA.
@@ -7,7 +7,7 @@ package com.mindgames.examples.tdd.store;
  * Time: 18:40
  * To change this template use File | Settings | File Templates.
  */
-public class Book {
+public class Book extends Item {
     private String author;
     private String title;
     private String publisher;
@@ -43,5 +43,10 @@ public class Book {
 
     public int getPublishYear() {
         return publishYear;
+    }
+
+    @Override
+    public String getItemType() {
+        return Item.BOOK_TYPE;
     }
 }
