@@ -1,8 +1,8 @@
 package com.mindgames.examples.tdd.store.service;
 
 import com.mindgames.examples.tdd.store.entities.Book;
+import com.mindgames.examples.tdd.store.entities.IStore;
 import com.mindgames.examples.tdd.store.entities.Item;
-import com.mindgames.examples.tdd.store.entities.Store;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -18,18 +18,18 @@ import java.util.Set;
  */
 public class BookStoreService {
 
-    private Store store;
+    private IStore IStore;
     private Set<String> authors;
     private Set<String> titles;
 
-    public BookStoreService(Store store) {
-        this.store = store;
+    public BookStoreService(IStore IStore) {
+        this.IStore = IStore;
         authors = new HashSet<String>();
         titles = new HashSet<String>();
     }
 
     public void addBook(Book book) {
-        store.addItem(book);
+        IStore.addItem(book);
         authors.add(book.getAuthor());
         String publisher = book.getPublisher() != null ? book.getPublisher() : "";
         String publishYear = book.getPublishYear() > 0 ? "" + book.getPublishYear() : "";
@@ -54,18 +54,19 @@ public class BookStoreService {
         return result;
     }
 
-    public Book findByTitle(String s) {
+    public List<Book> findByTitle(String s) {
+        List<Book> result = new ArrayList<Book>();
         for (Book book : getBooks()) {
             if (book.getTitle().equals(s)) {
-                return book;
+                result.add(book);
             }
         }
-        return null;
+        return result;
     }
 
 
     public List<Book> getBooks() {
-        List<Item> items = store.getItems();
+        List<Item> items = IStore.getItems();
         List<Book> books = new ArrayList<Book>();
         for (Item item : items) {
             if (item.getItemType().equals(Item.BOOK_TYPE)) {
@@ -73,5 +74,28 @@ public class BookStoreService {
             }
         }
         return books;
+    }
+
+    public void sellBook(Book book) {
+        String title = book.getTitle();
+        if (findByTitle(title).size() == 1) {
+            titles.remove(title);
+        }
+        String author = book.getAuthor();
+        if (findByTitle(author).size() == 1) {
+            titles.remove(title);
+        }
+        IStore.sellItem(book);
+    }
+
+    public int find(Book book) {
+        List<Item> items = IStore.getItems();
+        int result = 0;
+        for (Item item : items) {
+            if (book.equals(item)) {
+                result++;
+            }
+        }
+        return result;
     }
 }

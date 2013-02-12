@@ -1,7 +1,7 @@
 package com.mindgames.examples.tdd.store.service;
 
 import com.mindgames.examples.tdd.store.entities.Book;
-import com.mindgames.examples.tdd.store.entities.Store;
+import com.mindgames.examples.tdd.store.entities.IStore;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -20,11 +20,11 @@ import static org.testng.AssertJUnit.assertTrue;
  */
 public class BookStoreServiceTest {
 
-    private Store store;
+    private IStore store;
 
     @BeforeMethod
     public void setUp() {
-        store = new Store();
+        store = new MockStore();
     }
 
     @Test
@@ -105,9 +105,10 @@ public class BookStoreServiceTest {
         Book book = new Book();
         book.setTitle("Refactoring");
         bookStoreService.addBook(book);
-        Book foundedBook = bookStoreService.findByTitle("Refactoring");
-        assertTrue("Book object is null", foundedBook != null);
-        assertEquals("Smth wrong with find by author", book, foundedBook);
+        List<Book> foundedBooks = bookStoreService.findByTitle("Refactoring");
+        assertTrue("Book list is null", foundedBooks != null);
+        assertTrue("Book list is empty", !foundedBooks.isEmpty());
+        assertEquals("Smth wrong with find by author", book, foundedBooks.get(0));
     }
 
     @Test
@@ -159,7 +160,7 @@ public class BookStoreServiceTest {
     }
 
     @Test
-    public void shouldFindAmountOfBooks() {
+    public void shouldFindAmountOfBooksByAuthor() {
         BookStoreService bookStoreService = new BookStoreService(store);
         Book book = new Book();
         book.setTitle("Refactoring");
@@ -170,6 +171,49 @@ public class BookStoreServiceTest {
         bookStoreService.addBook(book);
         List<Book> byAuthor = bookStoreService.findByAuthor("Kent Beck");
         assertEquals("Two books were not added", 2, byAuthor.size());
+    }
+
+    @Test
+    public void shouldFindAmountOfBooksByTitle() {
+        BookStoreService bookStoreService = new BookStoreService(store);
+        Book book = new Book();
+        book.setTitle("Refactoring");
+        book.setAuthor("Kent Beck");
+        book.setPublisher("A-Press");
+        book.setPublishYear(2012);
+        bookStoreService.addBook(book);
+        bookStoreService.addBook(book);
+        List<Book> byTitle = bookStoreService.findByTitle("Refactoring");
+        assertEquals("Two books were not added", 2, byTitle.size());
+    }
+
+    @Test
+    public void shouldFindSameBooksCount() {
+        BookStoreService bookStoreService = new BookStoreService(store);
+        Book book = new Book();
+        book.setTitle("Refactoring");
+        book.setAuthor("Kent Beck");
+        book.setPublisher("A-Press");
+        book.setPublishYear(2012);
+        bookStoreService.addBook(book);
+        bookStoreService.addBook(book);
+        int sameBooksCount = bookStoreService.find(book);
+        assertEquals("Two books were not added", 2, sameBooksCount);
+    }
+
+    @Test
+    public void testCanAfterBuyBookItWillDisappear() {
+        BookStoreService bookStoreService = new BookStoreService(store);
+        Book book = new Book();
+        book.setTitle("Refactoring");
+        book.setAuthor("Kent Beck");
+        book.setPublisher("A-Press");
+        book.setPublishYear(2012);
+        book.setPrice(1000);
+        bookStoreService.addBook(book);
+        bookStoreService.sellBook(book);
+        assertTrue("Book didn't disappear", bookStoreService.findByTitle("Refactoring").isEmpty());
+        assertTrue("Book didn't disappear", bookStoreService.findByAuthor("Kent Beck").isEmpty());
     }
 
 }

@@ -49,4 +49,29 @@ public class Book extends Item {
     public String getItemType() {
         return Item.BOOK_TYPE;
     }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Book)) return false;
+
+        Book book = (Book) o;
+
+        if (publishYear != book.publishYear) return false;
+        if (!author.equals(book.author)) return false;
+        if (!publisher.equals(book.publisher)) return false;
+        if (!title.equals(book.title)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = author.hashCode();
+        result = 31 * result + title.hashCode();
+        result = 31 * result + publisher.hashCode();
+        result = 31 * result + publishYear;
+        return result;
+    }
 }
