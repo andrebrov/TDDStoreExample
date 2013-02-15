@@ -5,7 +5,6 @@ package com.mindgames.examples.tdd.store.paysystem;
  * User: andrebrov
  * Date: 12.02.13
  * Time: 20:32
- * To change this template use File | Settings | File Templates.
  */
 public class PaySystem {
     public void increaseProfit(int cash) {

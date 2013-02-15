@@ -9,7 +9,6 @@ import java.util.List;
  * User: andrebrov
  * Date: 12.02.13
  * Time: 21:36
- * To change this template use File | Settings | File Templates.
  */
 public interface IStore {
     void addItem(Item item);
@@ -20,5 +19,4 @@ public interface IStore {
 
     void setPaySystem(PaySystem paySystem);
 
-    PaySystem getPaySystem();
 }

@@ -12,7 +12,6 @@ import static org.testng.AssertJUnit.assertTrue;
  * User: andrebrov
  * Date: 12.02.13
  * Time: 20:05
- * To change this template use File | Settings | File Templates.
  */
 public class StoreTest {
 

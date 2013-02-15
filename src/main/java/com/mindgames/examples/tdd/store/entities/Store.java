@@ -10,7 +10,6 @@ import java.util.List;
  * User: andrebrov
  * Date: 12.02.13
  * Time: 18:40
- * To change this template use File | Settings | File Templates.
  */
 public class Store implements IStore {
 
@@ -39,7 +38,4 @@ public class Store implements IStore {
         this.paySystem = paySystem;
     }
 
-    public PaySystem getPaySystem() {
-        return paySystem;
-    }
 }

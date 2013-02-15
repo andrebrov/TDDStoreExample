@@ -7,7 +7,6 @@ import com.mindgames.examples.tdd.store.paysystem.PaySystem;
  * User: andrebrov
  * Date: 12.02.13
  * Time: 21:27
- * To change this template use File | Settings | File Templates.
  */
 public class SpyPaySystem extends PaySystem {
 

@@ -12,12 +12,10 @@ import java.util.List;
  * User: andrebrov
  * Date: 12.02.13
  * Time: 21:35
- * To change this template use File | Settings | File Templates.
  */
 public class MockStore implements IStore {
 
     private List<Item> items;
-    private PaySystem paySystem;
 
 
     public MockStore() {
@@ -37,10 +35,6 @@ public class MockStore implements IStore {
     }
 
     public void setPaySystem(PaySystem paySystem) {
-    }
-
-    public PaySystem getPaySystem() {
-        return null;
     }
 
 }

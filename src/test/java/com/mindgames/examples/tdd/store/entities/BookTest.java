@@ -9,7 +9,6 @@ import static org.testng.AssertJUnit.assertEquals;
  * User: andrebrov
  * Date: 12.02.13
  * Time: 19:58
- * To change this template use File | Settings | File Templates.
  */
 public class BookTest {
 

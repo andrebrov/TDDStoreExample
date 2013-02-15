@@ -5,7 +5,6 @@ package com.mindgames.examples.tdd.store.entities;
  * User: andrebrov
  * Date: 12.02.13
  * Time: 18:40
- * To change this template use File | Settings | File Templates.
  */
 public class Book extends Item {
     private String author;
@@ -58,12 +57,8 @@ public class Book extends Item {
 
         Book book = (Book) o;
 
-        if (publishYear != book.publishYear) return false;
-        if (!author.equals(book.author)) return false;
-        if (!publisher.equals(book.publisher)) return false;
-        if (!title.equals(book.title)) return false;
+        return publishYear == book.publishYear && author.equals(book.author) && publisher.equals(book.publisher) && title.equals(book.title);
 
-        return true;
     }
 
     @Override
