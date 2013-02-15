@@ -17,18 +17,18 @@ import java.util.Set;
  */
 public class BookStoreService {
 
-    private IStore IStore;
+    private IStore iStore;
     private Set<String> authors;
     private Set<String> titles;
 
-    public BookStoreService(IStore IStore) {
-        this.IStore = IStore;
+    public BookStoreService(IStore iStore) {
+        this.iStore = iStore;
         authors = new HashSet<String>();
         titles = new HashSet<String>();
     }
 
     public void addBook(Book book) {
-        IStore.addItem(book);
+        iStore.addItem(book);
         authors.add(book.getAuthor());
         String publisher = book.getPublisher() != null ? book.getPublisher() : "";
         String publishYear = book.getPublishYear() > 0 ? "" + book.getPublishYear() : "";
@@ -65,7 +65,7 @@ public class BookStoreService {
 
 
     public List<Book> getBooks() {
-        List<Item> items = IStore.getItems();
+        List<Item> items = iStore.getItems();
         List<Book> books = new ArrayList<Book>();
         for (Item item : items) {
             if (item.getItemType().equals(Item.BOOK_TYPE)) {
@@ -84,11 +84,11 @@ public class BookStoreService {
         if (findByTitle(author).size() == 1) {
             titles.remove(title);
         }
-        IStore.sellItem(book);
+        iStore.sellItem(book);
     }
 
     public int find(Book book) {
-        List<Item> items = IStore.getItems();
+        List<Item> items = iStore.getItems();
         int result = 0;
         for (Item item : items) {
             if (book.equals(item)) {

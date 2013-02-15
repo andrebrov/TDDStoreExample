@@ -2,12 +2,18 @@ package com.mindgames.examples.tdd.store.service;
 
 import com.mindgames.examples.tdd.store.entities.Book;
 import com.mindgames.examples.tdd.store.entities.IStore;
+import com.mindgames.examples.tdd.store.entities.Item;
+import com.mindgames.examples.tdd.store.util.BookBuilder;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertTrue;
 
@@ -20,17 +26,23 @@ import static org.testng.AssertJUnit.assertTrue;
 public class BookStoreServiceTest {
 
     private IStore store;
+    private List<Item> listWithTwoItems;
 
     @BeforeMethod
     public void setUp() {
-        store = new MockStore();
+        store = mock(IStore.class);
+        listWithTwoItems = new ArrayList<Item>();
+        listWithTwoItems.add(BookBuilder.fullfilledBook());
+        listWithTwoItems.add(BookBuilder.fullfilledBook());
     }
 
     @Test
     public void testCanAddBook() {
         BookStoreService bookStoreService = new BookStoreService(store);
-        Book book = new Book();
-        bookStoreService.addBook(book);
+        Item book = new Book();
+        bookStoreService.addBook(new Book());
+        List<Item> items = Collections.singletonList(book);
+        when(store.getItems()).thenReturn(items);
         List<Book> books = bookStoreService.getBooks();
         assertEquals("Book was not added", 1, books.size());
         assertEquals("Wrong book was added", book, books.get(0));
@@ -39,8 +51,7 @@ public class BookStoreServiceTest {
     @Test
     public void shouldGetAuthorsList() {
         BookStoreService bookStoreService = new BookStoreService(store);
-        Book book = new Book();
-        book.setAuthor("Kent Beck");
+        Book book = new BookBuilder().author("Kent Beck").build();
         bookStoreService.addBook(book);
         Set<String> authors = bookStoreService.getAuthors();
         assertEquals("Wrong amounts of authors", 1, authors.size());
@@ -50,10 +61,8 @@ public class BookStoreServiceTest {
     @Test
     public void shouldReturnUniqueAuthor() {
         BookStoreService bookStoreService = new BookStoreService(store);
-        Book book = new Book();
-        book.setAuthor("Kent Beck");
-        Book book1 = new Book();
-        book1.setAuthor("Kent Beck");
+        Book book = new BookBuilder().author("Kent Beck").build();
+        Book book1 = new BookBuilder().author("Kent Beck").build();
         bookStoreService.addBook(book);
         bookStoreService.addBook(book1);
         Set<String> authors = bookStoreService.getAuthors();
@@ -64,8 +73,7 @@ public class BookStoreServiceTest {
     @Test
     public void shouldGetTitlesList() {
         BookStoreService bookStoreService = new BookStoreService(store);
-        Book book = new Book();
-        book.setTitle("Refactoring");
+        Book book = new BookBuilder().title("Refactoring").build();
         bookStoreService.addBook(book);
         Set<String> titles = bookStoreService.getTitles();
         assertEquals("Wrong amounts of titles", 1, titles.size());
@@ -75,10 +83,8 @@ public class BookStoreServiceTest {
     @Test
     public void shouldReturnUniqueTitle() {
         BookStoreService bookStoreService = new BookStoreService(store);
-        Book book = new Book();
-        book.setTitle("Refactoring");
-        Book book1 = new Book();
-        book1.setTitle("Refactoring");
+        Book book = new BookBuilder().title("Refactoring").build();
+        Book book1 = new BookBuilder().title("Refactoring").build();
         bookStoreService.addBook(book);
         bookStoreService.addBook(book1);
         Set<String> titles = bookStoreService.getTitles();
@@ -89,9 +95,10 @@ public class BookStoreServiceTest {
     @Test
     public void shouldFindBookByAuthor() {
         BookStoreService bookStoreService = new BookStoreService(store);
-        Book book = new Book();
-        book.setAuthor("Kent Beck");
-        bookStoreService.addBook(book);
+        Item book = new BookBuilder().author("Kent Beck").build();
+        bookStoreService.addBook((Book) book);
+        List<Item> items = Collections.singletonList(book);
+        when(store.getItems()).thenReturn(items);
         List<Book> foundedBooks = bookStoreService.findByAuthor("Kent Beck");
         assertTrue("Book list is null", foundedBooks != null);
         assertTrue("Book list is empty", !foundedBooks.isEmpty());
@@ -101,9 +108,10 @@ public class BookStoreServiceTest {
     @Test
     public void shouldFindBookByTitle() {
         BookStoreService bookStoreService = new BookStoreService(store);
-        Book book = new Book();
-        book.setTitle("Refactoring");
-        bookStoreService.addBook(book);
+        Item book = new BookBuilder().title("Refactoring").build();
+        bookStoreService.addBook((Book) book);
+        List<Item> items = Collections.singletonList(book);
+        when(store.getItems()).thenReturn(items);
         List<Book> foundedBooks = bookStoreService.findByTitle("Refactoring");
         assertTrue("Book list is null", foundedBooks != null);
         assertTrue("Book list is empty", !foundedBooks.isEmpty());
@@ -113,12 +121,8 @@ public class BookStoreServiceTest {
     @Test
     public void shouldReturnDifferentTitlesForDifferentPublishers() {
         BookStoreService bookStoreService = new BookStoreService(store);
-        Book book = new Book();
-        book.setTitle("Refactoring");
-        book.setPublisher("Piter Press");
-        Book book1 = new Book();
-        book1.setTitle("Refactoring");
-        book1.setPublisher("A-Press");
+        Book book = new BookBuilder().title("Refactoring").publisher("Piter Press").build();
+        Book book1 = new BookBuilder().title("Refactoring").publisher("A-Press").build();
         bookStoreService.addBook(book);
         bookStoreService.addBook(book1);
         Set<String> titles = bookStoreService.getTitles();
@@ -130,16 +134,10 @@ public class BookStoreServiceTest {
     @Test
     public void shouldReturnDifferentTitlesForDifferentYears() {
         BookStoreService bookStoreService = new BookStoreService(store);
-        Book book = new Book();
-        book.setTitle("Refactoring");
-        book.setPublisher("A-Press");
-        book.setPublishYear(2012);
-        Book book1 = new Book();
-        book1.setTitle("Refactoring");
-        book1.setPublisher("A-Press");
-        book1.setPublishYear(2010);
+        bookStoreService.addBook((Book) BookBuilder.fullfilledBook());
+        Book book = (Book) BookBuilder.fullfilledBook();
+        book.setPublishYear(2010);
         bookStoreService.addBook(book);
-        bookStoreService.addBook(book1);
         Set<String> titles = bookStoreService.getTitles();
         assertEquals("Wrong amounts of titles", 2, titles.size());
         assertTrue("Wrong title", titles.contains("Refactoring [A-Press][2012]"));
@@ -149,25 +147,18 @@ public class BookStoreServiceTest {
     @Test
     public void shouldCanAddSameBookToStore() {
         BookStoreService bookStoreService = new BookStoreService(store);
-        Book book = new Book();
-        book.setTitle("Refactoring");
-        book.setPublisher("A-Press");
-        book.setPublishYear(2012);
-        bookStoreService.addBook(book);
-        bookStoreService.addBook(book);
+        bookStoreService.addBook((Book) BookBuilder.fullfilledBook());
+        bookStoreService.addBook((Book) BookBuilder.fullfilledBook());
+        when(store.getItems()).thenReturn(listWithTwoItems);
         assertEquals("Two books were not added", 2, bookStoreService.getBooks().size());
     }
 
     @Test
     public void shouldFindAmountOfBooksByAuthor() {
         BookStoreService bookStoreService = new BookStoreService(store);
-        Book book = new Book();
-        book.setTitle("Refactoring");
-        book.setAuthor("Kent Beck");
-        book.setPublisher("A-Press");
-        book.setPublishYear(2012);
-        bookStoreService.addBook(book);
-        bookStoreService.addBook(book);
+        bookStoreService.addBook((Book) BookBuilder.fullfilledBook());
+        bookStoreService.addBook((Book) BookBuilder.fullfilledBook());
+        when(store.getItems()).thenReturn(listWithTwoItems);
         List<Book> byAuthor = bookStoreService.findByAuthor("Kent Beck");
         assertEquals("Two books were not added", 2, byAuthor.size());
     }
@@ -175,13 +166,9 @@ public class BookStoreServiceTest {
     @Test
     public void shouldFindAmountOfBooksByTitle() {
         BookStoreService bookStoreService = new BookStoreService(store);
-        Book book = new Book();
-        book.setTitle("Refactoring");
-        book.setAuthor("Kent Beck");
-        book.setPublisher("A-Press");
-        book.setPublishYear(2012);
-        bookStoreService.addBook(book);
-        bookStoreService.addBook(book);
+        bookStoreService.addBook((Book) BookBuilder.fullfilledBook());
+        bookStoreService.addBook((Book) BookBuilder.fullfilledBook());
+        when(store.getItems()).thenReturn(listWithTwoItems);
         List<Book> byTitle = bookStoreService.findByTitle("Refactoring");
         assertEquals("Two books were not added", 2, byTitle.size());
     }
@@ -189,28 +176,18 @@ public class BookStoreServiceTest {
     @Test
     public void shouldFindSameBooksCount() {
         BookStoreService bookStoreService = new BookStoreService(store);
-        Book book = new Book();
-        book.setTitle("Refactoring");
-        book.setAuthor("Kent Beck");
-        book.setPublisher("A-Press");
-        book.setPublishYear(2012);
-        bookStoreService.addBook(book);
-        bookStoreService.addBook(book);
-        int sameBooksCount = bookStoreService.find(book);
+        bookStoreService.addBook((Book) BookBuilder.fullfilledBook());
+        bookStoreService.addBook((Book) BookBuilder.fullfilledBook());
+        when(store.getItems()).thenReturn(listWithTwoItems);
+        int sameBooksCount = bookStoreService.find((Book) BookBuilder.fullfilledBook());
         assertEquals("Two books were not added", 2, sameBooksCount);
     }
 
     @Test
     public void testCanAfterBuyBookItWillDisappear() {
         BookStoreService bookStoreService = new BookStoreService(store);
-        Book book = new Book();
-        book.setTitle("Refactoring");
-        book.setAuthor("Kent Beck");
-        book.setPublisher("A-Press");
-        book.setPublishYear(2012);
-        book.setPrice(1000);
-        bookStoreService.addBook(book);
-        bookStoreService.sellBook(book);
+        bookStoreService.addBook((Book) BookBuilder.fullfilledBook());
+        bookStoreService.sellBook((Book) BookBuilder.fullfilledBook());
         assertTrue("Book didn't disappear", bookStoreService.findByTitle("Refactoring").isEmpty());
         assertTrue("Book didn't disappear", bookStoreService.findByAuthor("Kent Beck").isEmpty());
     }

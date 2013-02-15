@@ -1,9 +1,11 @@
 package com.mindgames.examples.tdd.store.entities;
 
+import com.mindgames.examples.tdd.store.paysystem.PaySystem;
 import org.testng.annotations.Test;
 
 import java.util.List;
 
+import static org.mockito.Mockito.*;
 import static org.testng.AssertJUnit.assertEquals;
 import static org.testng.AssertJUnit.assertTrue;
 
@@ -15,6 +17,9 @@ import static org.testng.AssertJUnit.assertTrue;
  */
 public class StoreTest {
 
+    public static final Item DUMMY_ITEM = mock(Item.class);
+    private PaySystem paySystem = mock(PaySystem.class);
+
     @Test
     public void testStoreIsEmptyByDefault() {
         IStore store = new Store();
@@ -25,18 +30,16 @@ public class StoreTest {
     @Test
     public void testCanAddItem() {
         IStore store = new Store();
-        DummyItem item = new DummyItem();
-        store.addItem(item);
+        store.addItem(DUMMY_ITEM);
         assertEquals("Item was not added", 1, store.getItems().size());
     }
 
     @Test
     public void testItemWillDisappearAfterSelling() {
         IStore store = new Store();
-        store.setPaySystem(new StubPaySystem());
-        DummyItem item = new DummyItem();
-        store.addItem(item);
-        store.sellItem(item);
+        store.setPaySystem(paySystem);
+        store.addItem(DUMMY_ITEM);
+        store.sellItem(DUMMY_ITEM);
         List<Item> items = store.getItems();
         assertTrue("Item was not sold", items.isEmpty());
     }
@@ -44,13 +47,12 @@ public class StoreTest {
     @Test
     public void testProfitIncreasedAfterSell() {
         IStore store = new Store();
-        SpyPaySystem paySystem = new SpyPaySystem();
         store.setPaySystem(paySystem);
-        DummyItem item = new DummyItem();
+        Item item = mock(Item.class);
+        when(item.getPrice()).thenReturn(100);
         item.setPrice(100);
         store.addItem(item);
         store.sellItem(item);
-        assertTrue("PaySystem.increaseProfit() was not called", paySystem.verifyIncreaseProfit());
-        assertEquals("PaySystem.increaseProfit() not called with wrong param", 100, paySystem.verifyIncreaseProfitParam());
+        verify(paySystem).increaseProfit(100);
     }
 }
